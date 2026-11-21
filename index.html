@@ -47,7 +47,7 @@ h1 { margin: 0; font-size: 1.35rem; font-weight: 800; letter-spacing: -.02em; li
 .skor dt { font-size: .62rem; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--soluk); }
 .skor dd { margin: 0; font-size: 1.05rem; font-weight: 700; line-height: 1.3; font-variant-numeric: tabular-nums; }
 .modlar { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 4px; background: var(--kart); border: 1px solid var(--cizgi); border-radius: 14px; }
-.modlar button { min-height: 40px; padding: 0 8px; background: transparent; color: var(--soluk); font-size: .95rem; border-radius: 10px; white-space: nowrap; }
+.modlar button { min-height: 40px; padding: 4px 6px; background: transparent; color: var(--soluk); font-size: .9rem; line-height: 1.15; border-radius: 10px; text-wrap: balance; }
 .modlar button[aria-pressed="true"] { background: var(--ana); color: var(--ana-metin); }
 .kart { background: var(--kart); border: 1px solid var(--cizgi); border-radius: 18px; padding: 14px; display: grid; grid-template-columns: minmax(0, 1fr);
   gap: 12px; min-width: 0; }
@@ -220,7 +220,7 @@ details p { margin: 8px 0 0; max-width: 65ch; }
 
   <details>
     <summary>Karşılıklı mod nasıl oynanır?</summary>
-    <p>İkiniz de sayfayı kendi telefonunuzda claude.ai hesabınızla açın, "Karşılıklı"ya basıp adınızı yazın. İkinize de aynı hayvanlar gelir. Herkes tahminini gizlice girer; ikiniz de tartınca terazi açılır ve iki tahmin yan yana görünür. Doğruya daha yakın olan turu alır. 10 tur sonunda toplam puanı yüksek olan kazanır, "Rövanş" ile yeni maç başlar. Herkese açık linkle girenler karşılıklı moda bağlanamaz.</p>
+    <p id="vsYardim">İkiniz de sayfayı kendi telefonunuzda claude.ai hesabınızla açın, "Karşılıklı"ya basıp adınızı yazın. İkinize de aynı hayvanlar gelir. Herkes tahminini gizlice girer; ikiniz de tartınca terazi açılır ve iki tahmin yan yana görünür. Doğruya daha yakın olan turu alır. 10 tur sonunda toplam puanı yüksek olan kazanır, "Rövanş" ile yeni maç başlar. Herkese açık linkle girenler karşılıklı moda bağlanamaz.</p>
   </details>
   <details>
     <summary>Nasıl puan alırım?</summary>
@@ -681,7 +681,14 @@ function webGir(ad, kod) {
   vsKatil(ad);
 }
 function odaBaglan() {
-  if (WEB) { odaDurum = "giris"; $("vsKod").hidden = false; return; }
+  if (WEB) {
+    odaDurum = "giris"; $("vsKod").hidden = false;
+    $("vsYardim").textContent = "İkiniz de sayfayı kendi telefonunuzda açıp \"Karşılıklı\"ya basın. Biriniz adını yazıp kodu boş bırakarak oda kursun; " +
+      "ekranda çıkan 4 haneli kodu diğeri kendi adıyla birlikte yazıp katılsın. İkinize de aynı hayvanlar gelir, herkes tahminini gizlice girer; " +
+      "ikiniz de tartınca iki tahmin yan yana görünür ve doğruya daha yakın olan turu alır. 10 tur sonunda toplamı yüksek olan kazanır, " +
+      "\"Rövanş\" ile yeni maç başlar. Alttaki kutudan yazışabilirsiniz; mesajlar hiçbir yerde saklanmaz.";
+    return;
+  }
   const p = window.claude?.use?.("room");
   if (!p) { odaDurum = "yok"; return vsCiz(); }
   p.then(r => {
