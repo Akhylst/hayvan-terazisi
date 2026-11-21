@@ -20,6 +20,7 @@
   --mavi: #2e66e6; --mavi-m: #1f55cc; --mercan: #f05a2a; --mercan-m: #c2410f;
   --yesil: #12805f; --yesil-yumusak: #d8f2e8; --amber: #8f5c00; --amber-yumusak: #f8ecd2;
   --golge: 0 1px 2px rgba(22, 24, 29, .06), 0 8px 24px -12px rgba(22, 24, 29, .22);
+  --deniz-ust: #d3e6f2; --deniz-alt: #f0f6fa; --kara-ust: #ebe2d1; --kara-alt: #f8f5ef; --kus-ust: #dde9f7; --kus-alt: #fafcff;
   --f: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   --fb: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
 }
@@ -31,10 +32,12 @@
     --pirinc: #d3a548; --pirinc-acik: #f2cf7e; --pirinc-koyu: #a07626;
     --mavi: #5f93ff; --mavi-m: #8cb2ff; --mercan: #ff7a4d; --mercan-m: #ff9d78;
     --yesil: #4fd1a5; --yesil-yumusak: #153a2e; --amber: #f0b847; --amber-yumusak: #3a2e14;
+    --deniz-ust: #12283a; --deniz-alt: #0f161c; --kara-ust: #2b2519; --kara-alt: #141311; --kus-ust: #1c2433; --kus-alt: #121417;
     --golge: 0 1px 2px rgba(0, 0, 0, .35), 0 10px 28px -14px rgba(0, 0, 0, .8); color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
+  --deniz-ust: #12283a; --deniz-alt: #0f161c; --kara-ust: #2b2519; --kara-alt: #141311; --kus-ust: #1c2433; --kus-alt: #121417;
   --zemin: #0f1012; --kart: #18191c; --kart-2: #1f2024; --cizgi: #2d2e33;
   --sahne-ust: #25262b; --sahne-alt: #121315; --isik: rgba(255, 214, 140, .11);
   --murekkep: #eeeef0; --soluk: #a2a4ab; --ana: #e8b84f; --ana-metin: #17140c;
@@ -174,6 +177,62 @@ button:focus-visible, a:focus-visible, summary:focus-visible { outline: 2px soli
 details { background: var(--kart); border: 1px solid var(--cizgi); border-radius: 16px; padding: 12px 16px; font-size: .9rem; color: var(--soluk); }
 details summary { cursor: pointer; font-weight: 600; color: var(--murekkep); }
 details p { margin: 8px 0 0; max-width: 65ch; }
+/* Ses düğmesi, mod ızgarası, tema çipleri, kutlama, tepkiler, günün turu, maç özeti, albüm, rekorlar, arşiv */
+.ustSag { display: flex; align-items: center; gap: 6px; }
+.sesDug { min-height: 44px; width: 44px; padding: 0; border-radius: 12px; background: var(--kart); border: 1px solid var(--cizgi); color: var(--murekkep);
+  box-shadow: var(--golge); display: grid; place-items: center; }
+.sesDug svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.sesDug[aria-pressed="false"] .dalga, .sesDug[aria-pressed="true"] .carpi { display: none; }
+@media (max-width: 479px) { .modlar { grid-auto-flow: row; grid-template-columns: 1fr 1fr; } }
+.temalar { display: flex; flex-wrap: wrap; gap: 6px; }
+.temalar button { min-height: 36px; padding: 0 14px; border-radius: 999px; background: var(--kart); border: 1px solid var(--cizgi); color: var(--soluk); font-size: .88rem; }
+.temalar button[aria-pressed="true"] { background: var(--murekkep); color: var(--kart); border-color: transparent; }
+.sahne[data-tema="deniz"] { --sahne-ust: var(--deniz-ust); --sahne-alt: var(--deniz-alt); }
+.sahne[data-tema="kara"] { --sahne-ust: var(--kara-ust); --sahne-alt: var(--kara-alt); }
+.sahne[data-tema="kus"] { --sahne-ust: var(--kus-ust); --sahne-alt: var(--kus-alt); }
+.sahne[data-etiket]:not([data-etiket=""])::before { content: attr(data-etiket); position: absolute; top: 10px; left: 14px; z-index: 1;
+  font: 700 .68rem/1 var(--f); letter-spacing: .1em; text-transform: uppercase; color: var(--soluk); }
+.konfeti, .ucanlar { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; }
+.ucan { position: absolute; bottom: 12%; font-size: 2.2rem; animation: yuksel 1.9s cubic-bezier(.2, .7, .3, 1) forwards; }
+@keyframes yuksel { 0% { transform: translateY(0) scale(.6); opacity: 0; } 15% { opacity: 1; transform: translateY(-20px) scale(1.15); }
+  100% { transform: translateY(-170px) scale(1); opacity: 0; } }
+.tepkiler { display: flex; flex-wrap: wrap; gap: 6px; }
+.tepkiler button { min-height: 40px; min-width: 44px; padding: 0 8px; font-size: 1.3rem; background: var(--kart-2); border: 1px solid var(--cizgi); border-radius: 12px; }
+.rekorNot { margin: 0; padding: 8px 12px; border-radius: 12px; background: color-mix(in srgb, var(--pirinc) 20%, var(--kart)); font-weight: 700; }
+.macOzet, .gunOzet { display: grid; gap: 10px; }
+.macOzet h3, .gunOzet h2, #album h3 { margin: 4px 0 0; font: 800 1.1rem/1.25 var(--fb); color: var(--murekkep); }
+.macOzet p, .gunOzet p { margin: 0; }
+.tabloKap { overflow-x: auto; }
+.macTablo { width: 100%; border-collapse: collapse; font-size: .88rem; font-variant-numeric: tabular-nums; color: var(--murekkep); }
+.macTablo th { text-align: left; font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--soluk); padding: 4px 6px; }
+.macTablo td { padding: 6px; border-top: 1px solid var(--cizgi); vertical-align: top; }
+.macTablo td small { display: block; color: var(--soluk); font-size: .72rem; font-weight: 400; }
+.macTablo td.iyi { color: var(--yesil); font-weight: 700; }
+.gunOzet { justify-items: center; text-align: center; }
+.kareler { font-size: 2rem; letter-spacing: .12em; line-height: 1.2; }
+.gunPuan { font: 800 2.4rem/1 var(--fb); font-variant-numeric: tabular-nums; } .gunPuan small { font-size: 1rem; color: var(--soluk); }
+.gunBilgi { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0; }
+.gunBilgi div, .rekorlar div { padding: 6px 12px; border-radius: 12px; background: var(--kart-2); border: 1px solid var(--cizgi); }
+.gunBilgi dt, .rekorlar dt { font-size: .68rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--soluk); }
+.gunBilgi dd, .rekorlar dd { margin: 0; font: 800 1.1rem/1.3 var(--fb); color: var(--murekkep); font-variant-numeric: tabular-nums; }
+.gunTurlar { justify-self: stretch; text-align: left; margin: 0; padding-left: 1.3rem; display: grid; gap: 4px; font-size: .9rem; }
+.gunTurlar b { font-variant-numeric: tabular-nums; }
+.gunOzet .ana { justify-self: stretch; }
+.paylasMetin { display: block; margin-top: 6px; text-align: left; white-space: pre-wrap; user-select: all; padding: 10px; border-radius: 12px; background: var(--kart-2);
+  border: 1px solid var(--cizgi); font: 500 .9rem var(--f); color: var(--murekkep); }
+.bos { color: var(--soluk); }
+.albumGrid { list-style: none; margin: 6px 0 12px; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 6px; }
+.albumGrid li { display: grid; justify-items: center; align-content: start; gap: 2px; padding: 8px 4px; border-radius: 12px; background: var(--kart-2);
+  border: 1px solid var(--cizgi); text-align: center; font-size: .72rem; color: var(--soluk); min-width: 0; }
+.albumGrid svg { width: 52px; height: 40px; fill: var(--mavi); }
+.albumGrid b { font-size: .8rem; color: var(--murekkep); overflow-wrap: anywhere; line-height: 1.2; }
+.albumGrid .yok { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; border: 1.5px dashed var(--cizgi); font: 800 1.1rem var(--fb); }
+.rekorlar { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; margin: 8px 0 0; }
+.arsivListe { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 6px; }
+.arsivListe details { padding: 8px 12px; background: var(--kart-2); border-radius: 12px; }
+.arsivListe summary { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 10px; font-weight: 500; }
+.arsivListe .tarih { color: var(--soluk); font-size: .8rem; }
+.kazandi { color: var(--yesil); }
 @media (min-width: 600px) {
   .sayfa { padding-top: 26px; gap: 14px; }
   h1 { font-size: 1.8rem; }
@@ -182,7 +241,7 @@ details p { margin: 8px 0 0; max-width: 65ch; }
   .soru { font-size: 1.35rem; }
 }
 @media (min-width: 700px) { .hayvanlar { grid-template-columns: 1fr 1fr; } }
-@media (prefers-reduced-motion: reduce) { button, .sure .cubuk i, .modlar button { transition: none; } }
+@media (prefers-reduced-motion: reduce) { button, .sure .cubuk i, .modlar button { transition: none; } .ucan { display: none; } }
 </style>
 
 </head>
@@ -198,12 +257,20 @@ details p { margin: 8px 0 0; max-width: 65ch; }
       <div><dt>Puan</dt><dd id="sPuan">0</dd></div>
       <div><dt id="dtOrt">Ort.</dt><dd id="sOrt">–</dd></div>
     </dl>
+    <div class="ustSag"><button type="button" class="sesDug" id="sesDug" aria-pressed="true" aria-label="Sesi kapat">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="dalga" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="carpi" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
+    </button></div>
   </header>
   <p class="ipucu">Teraziyi dengelemek için soru işaretli kefeye kaç tane koymalısın?</p>
   <div class="modlar" id="modlar" role="group" aria-label="Oyun modu">
     <button type="button" id="modTum" aria-pressed="true">Tüm hayvanlar</button>
+    <button type="button" id="modGun" aria-pressed="false">Günün turu</button>
     <button type="button" id="modBenim" aria-pressed="false">Benim hayvanlarım</button>
     <button type="button" id="modVs" aria-pressed="false">Karşılıklı</button>
+  </div>
+  <div class="temalar" id="temalar" role="group" aria-label="Tema">
+    <button type="button" data-tema="karisik" aria-pressed="true">Karışık</button><button type="button" data-tema="kara" aria-pressed="false">Kara</button>
+    <button type="button" data-tema="deniz" aria-pressed="false">Deniz</button><button type="button" data-tema="kus" aria-pressed="false">Kuşlar</button>
   </div>
 
   <section class="vs" id="vs" aria-live="polite" hidden>
@@ -222,6 +289,10 @@ details p { margin: 8px 0 0; max-width: 65ch; }
     </div>
     <div class="sohbet" id="sohbet" hidden>
       <ol class="mesajlar" id="mesajlar" aria-live="polite" aria-label="Sohbet"></ol>
+      <div class="tepkiler" id="tepkiler" role="group" aria-label="Hızlı tepki">
+        <button type="button" data-e="😂">😂</button><button type="button" data-e="😮">😮</button><button type="button" data-e="👏">👏</button>
+        <button type="button" data-e="😭">😭</button><button type="button" data-e="🔥">🔥</button><button type="button" data-e="❤️">❤️</button>
+      </div>
       <form id="sohbetForm" autocomplete="off">
         <label class="gizli" for="mesaj">Mesaj</label>
         <input id="mesaj" type="text" maxlength="200" placeholder="Mesaj yaz…" enterkeyhint="send">
@@ -245,6 +316,8 @@ details p { margin: 8px 0 0; max-width: 65ch; }
       <div class="carpan sol" id="carSol"></div>
       <div class="carpan sag" id="carSag"></div>
       <div class="carpan dogru" id="carDogru" hidden></div>
+      <canvas class="konfeti" id="konfeti"></canvas>
+      <div class="ucanlar" id="ucanlar"></div>
     </div>
     <div class="sure" id="sure" role="timer" hidden><span id="sureYazi"></span><span class="cubuk"><i id="sureCubuk"></i></span></div>
     <form id="form" autocomplete="off">
@@ -276,20 +349,27 @@ details p { margin: 8px 0 0; max-width: 65ch; }
       <div class="yakin" role="meter" aria-label="Yakınlık" aria-valuemin="0" aria-valuemax="100" id="yakin"><i id="yakinCubuk"></i></div>
       <p class="cevap" id="cevap"></p>
       <ul class="kiyas" id="kiyas" hidden></ul>
+      <p class="rekorNot" id="rekorNot" hidden></p>
+      <section class="macOzet" id="macOzet" hidden></section>
       <button class="ana" type="button" id="sonraki">Sonraki tur</button>
       <div class="hayvanlar" id="hayvanlar"></div>
     </section>
   </main>
+  <section class="kart gunOzet" id="gunOzet" aria-live="polite" hidden></section>
 
   <div class="alt"><button class="ikinci" type="button" id="bastan">Baştan başla</button></div>
 
+  <details id="albumPanel"><summary>Hayvan albümü <span id="albumSay"></span></summary><div id="album"></div></details>
+  <details id="rekorPanel"><summary>Rekorların</summary><dl class="rekorlar" id="rekorlar"></dl></details>
+  <details id="arsivPanel"><summary>Maç arşivi <span id="arsivSay"></span></summary><div id="arsiv"></div></details>
+
   <details>
     <summary>Karşılıklı mod nasıl oynanır?</summary>
-    <p id="vsYardim">İkiniz de sayfayı kendi telefonunuzda claude.ai hesabınızla açın, "Karşılıklı"ya basıp adınızı yazın. İkinize de aynı hayvanlar gelir. Herkes tahminini gizlice girer; biriniz tahmin verince diğerinin 15 saniyesi kalır, süre biterse kutudaki sayı gönderilir (boşsa 0 puan). İkiniz de tartınca terazi açılır ve iki tahmin yan yana görünür. Doğruya daha yakın olan turu alır. 10 tur sonunda toplam puanı yüksek olan kazanır, "Rövanş" ile yeni maç başlar. Herkese açık linkle girenler karşılıklı moda bağlanamaz.</p>
+    <p id="vsYardim">İkiniz de sayfayı kendi telefonunuzda claude.ai hesabınızla açın, "Karşılıklı"ya basıp adınızı yazın. İkinize de aynı hayvanlar gelir. Herkes tahminini gizlice girer; biriniz tahmin verince diğerinin 15 saniyesi kalır, süre biterse kutudaki sayı gönderilir (boşsa 0 puan). İkiniz de tartınca terazi açılır ve iki tahmin yan yana görünür. Doğruya daha yakın olan turu alır. 10 tur sonunda toplam puanı yüksek olan kazanır, "Rövanş" ile yeni maç başlar. Maç bitince tur tur özet çıkar ve maç, "Maç arşivi"ne kaydedilir. Herkese açık linkle girenler karşılıklı moda bağlanamaz.</p>
   </details>
   <details>
     <summary>Nasıl puan alırım?</summary>
-    <p>Puan, doğru sayıya ne kadar yaklaştığına bağlı: 100'den sapma yüzdesi düşülür, fazla ve eksik aynı sayılır. Doğrusu 100 iken: 100 dersen 100, 90 ya da 110 dersen 90, 75 ya da 125 dersen 75, 50 ya da 150 dersen 50, 200 ve üstü dersen 0. Doğrudan en çok %5 sapan tahminde terazi dengede kalır. Hesap makinesiyle ağırlıkları kafanda bölüp çarpabilirsin; "Tahmine yaz" sonucu yuvarlayıp kutuya koyar. "Benim hayvanlarım" modunda her turda kedilerinden biri var; diğer modda da arada bir çıkarlar.</p>
+    <p>Puan, doğru sayıya ne kadar yaklaştığına bağlı: 100'den sapma yüzdesi düşülür, fazla ve eksik aynı sayılır. Doğrusu 100 iken: 100 dersen 100, 90 ya da 110 dersen 90, 75 ya da 125 dersen 75, 50 ya da 150 dersen 50, 200 ve üstü dersen 0. Doğrudan en çok %5 sapan tahminde terazi dengede kalır. Hesap makinesiyle ağırlıkları kafanda bölüp çarpabilirsin; "Tahmine yaz" sonucu yuvarlayıp kutuya koyar. "Benim hayvanlarım" modunda her turda kedilerinden biri var; "Tüm hayvanlar"da (karışık temada) arada bir çıkarlar. "Günün turu" her gün herkese aynı 5 turdur; günde bir kez oynanır, her kare bir turun puanı (🟩 90+, 🟨 60+, 🟧 30+, 🟥 30 altı). Albüm, rekorlar ve maç arşivi yalnız bu telefonda saklanır.</p>
   </details>
   <details>
     <summary>Ağırlıklar, resimler ve bilgiler nereden geliyor?</summary>
@@ -329,10 +409,17 @@ function agirlik(g) {
   return (v < 10 ? ONDA.format(v) : SAYI.format(Math.round(v))) + " " + b;
 }
 
+// Tarayıcıda saklananlar (her telefonun kendi kaydı): ht-gun, ht-seri, ht-rekor, ht-album, ht-arsiv, ht-tema, ht-ses
+const depoOku = (k, v) => { try { const x = JSON.parse(localStorage.getItem(k)); return x ?? v; } catch (e) { return v; } };
+const depoYaz = (k, v) => { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} };
+const nesne = x => x && typeof x === "object" && !Array.isArray(x) ? x : {};
+const TEMALAR = { karisik: "", kara: "Kara turu", deniz: "Deniz turu", kus: "Kuş turu" };
+let tema = depoOku("ht-tema", "karisik");
+if (!(tema in TEMALAR)) tema = "karisik";
 let son = [], mod = "tum";
 try { son = JSON.parse(localStorage.getItem("ht-son")) || []; } catch (e) { son = []; }
 if (!Array.isArray(son)) son = [];
-try { const m = localStorage.getItem("ht-mod"); if (m === "benim" || m === "vs") mod = m; } catch (e) {}
+try { const m = localStorage.getItem("ht-mod"); if (m === "benim" || m === "vs" || m === "gun") mod = m; } catch (e) {}
 if (!OZELLER.length && mod === "benim") mod = "tum";
 let durum = { tur: 0, toplam: 0, simdi: null, cevap: null };
 
@@ -353,10 +440,10 @@ function grupSec(rnd, disla) {
 // Tur kuralı: ağır olandan 1-5 tane; doğru sayı 2-2000, yuvarlama en çok %3 kaydırır; haric'teki hayvanlar ve aynı siluetli çift
 // gelmez. kediTuru: taraflardan biri özel hayvan (sırayla hepsi gelsin diye haric'te olmayan seçilir). rnd: karşılıklı modda iki telefonda
 // aynı turu üretmek için tohumlu üreteç (karıştırma Fisher-Yates: sort'un sırası tarayıcıdan tarayıcıya değişir). ters: bilinen kefe sağda
-function turUret(kediTuru, rnd, haric) {
+function turUret(kediTuru, rnd, haric, tm = "karisik") {
   for (let i = 0; i < 500; i++) {
     const taze = OZELLER.filter(k => !haric.has(k.id)), kume = taze.length ? taze : OZELLER;
-    const g1 = kediTuru ? "kara" : grupSec(rnd), g2 = rnd() < AYNI_GRUP ? g1 : grupSec(rnd, g1);
+    const g1 = tm !== "karisik" ? tm : kediTuru ? "kara" : grupSec(rnd), g2 = tm !== "karisik" ? tm : rnd() < AYNI_GRUP ? g1 : grupSec(rnd, g1);
     let A = kediTuru ? kume[Math.floor(rnd() * kume.length)] : sec(haric, rnd, g1), B = sec(haric, rnd, g2);
     if (A.g < B.g) [A, B] = [B, A];
     const R = A.g / B.g;
@@ -370,13 +457,71 @@ function turUret(kediTuru, rnd, haric) {
   }
   return null;
 }
-// Tek kişilik yeni tur: son 80 turun hayvanları gelmez (tarayıcıda saklanır)
+// Tek kişilik yeni tur: son 80 turun hayvanları gelmez (tarayıcıda saklanır); "Tüm hayvanlar"da seçili temanın grubundan
 function yeniTur(kediTuru) {
-  const T = turUret(kediTuru, Math.random, new Set(son));
-  if (!T) { son = []; return yeniTur(kediTuru); }
+  const tm = mod === "tum" ? tema : "karisik";
+  let T = turUret(kediTuru, Math.random, new Set(son), tm);
+  if (!T) { son = []; T = turUret(kediTuru, Math.random, new Set(), tm) || turUret(kediTuru, Math.random, new Set()); }
   son = [...son.filter(x => x !== T.a && x !== T.b), T.a, T.b].slice(-SON_BOY);
   try { localStorage.setItem("ht-son", JSON.stringify(son)); } catch (e) {}
   return T;
+}
+
+// Ses (Web Audio ile üretilir, dosya yok) ve titreşim (Android; iPhone tarayıcısı desteklemiyor). Ses düğmesiyle kapanır
+let sesAcik = depoOku("ht-ses", true) !== false, sesBag = null, sonTik = 0;
+function nota(f, bas, sure, tip = "sine", vol = 0.12, f2 = f) {
+  const a = sesBag, t = a.currentTime + bas, o = a.createOscillator(), g = a.createGain();
+  o.type = tip; o.frequency.setValueAtTime(f, t); o.frequency.exponentialRampToValueAtTime(f2, t + sure);
+  g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(vol, t + 0.012); g.gain.exponentialRampToValueAtTime(0.0001, t + sure);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + sure + 0.03);
+}
+function ses(tur) {
+  if (!sesAcik) return;
+  try {
+    sesBag ??= new (window.AudioContext || window.webkitAudioContext)();
+    if (sesBag.state === "suspended") sesBag.resume();
+    if (tur === "tik") nota(1800, 0, 0.025, "triangle", 0.03);
+    else if (tur === "tart") nota(220, 0, 0.28, "sine", 0.18, 70);
+    else if (tur === "tam") [784, 988, 1319, 1568].forEach((f, i) => nota(f, i * 0.08, 0.38, "sine", 0.12));
+    else if (tur === "iyi") [659, 988].forEach((f, i) => nota(f, i * 0.09, 0.3, "sine", 0.12));
+    else if (tur === "orta") nota(523, 0, 0.25, "triangle", 0.1);
+    else if (tur === "kotu") nota(300, 0, 0.35, "triangle", 0.1, 160);
+    else if (tur === "mesaj") nota(1046, 0, 0.12, "sine", 0.08);
+    else if (tur === "sure") nota(880, 0, 0.06, "square", 0.035);
+  } catch (e) {}
+}
+const titres = d => { try { navigator.vibrate?.(d); } catch (e) {} };
+function sesYaz() { $("sesDug").setAttribute("aria-pressed", String(sesAcik)); $("sesDug").setAttribute("aria-label", sesAcik ? "Sesi kapat" : "Sesi aç"); }
+$("sesDug").addEventListener("click", () => { sesAcik = !sesAcik; depoYaz("ht-ses", sesAcik); sesYaz(); ses("mesaj"); });
+// Kutlama: 95+ puanda konfeti (tuval, kütüphanesiz); ses ve titreşim puana göre
+let konfetiAnim = 0;
+function konfeti() {
+  const cv = $("konfeti"), g = cv.getContext?.("2d");
+  if (!g || hareketAz()) return;
+  const dpr = window.devicePixelRatio || 1, W = $("sahne").clientWidth, Y = $("sahne").clientHeight;
+  cv.width = W * dpr; cv.height = Y * dpr; g.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const renk = ["#e8b84f", "#2e66e6", "#f05a2a", "#12805f", "#f2cf7e", "#5f93ff"];
+  const P = Array.from({ length: 110 }, () => ({ x: W / 2 + (Math.random() - 0.5) * 60, y: Y * 0.5, vx: (Math.random() - 0.5) * 11, vy: -Math.random() * 10 - 3,
+    r: Math.random() * 6.3, vr: (Math.random() - 0.5) * 0.3, w: 5 + Math.random() * 5, h: 3 + Math.random() * 4, c: renk[Math.floor(Math.random() * renk.length)] }));
+  const t0 = performance.now();
+  cancelAnimationFrame(konfetiAnim);
+  const adim = an => {
+    const o = (an - t0) / 1900;
+    g.clearRect(0, 0, W, Y);
+    if (o >= 1) return;
+    for (const q of P) {
+      q.vy += 0.3; q.vx *= 0.99; q.x += q.vx; q.y += q.vy; q.r += q.vr;
+      g.save(); g.globalAlpha = 1 - o * o; g.translate(q.x, q.y); g.rotate(q.r); g.fillStyle = q.c; g.fillRect(-q.w / 2, -q.h / 2, q.w, q.h); g.restore();
+    }
+    konfetiAnim = requestAnimationFrame(adim);
+  };
+  konfetiAnim = requestAnimationFrame(adim);
+}
+function kutla(p, tam) {
+  const cok = tam || p >= 95;
+  ses(cok ? "tam" : p >= 70 ? "iyi" : p >= 40 ? "orta" : "kotu");
+  titres(cok ? [40, 60, 40, 60, 90] : p >= 70 ? 30 : 15);
+  if (cok) konfeti();
 }
 
 // Kaldıraç: kol mil etrafında döner, tablalar kol uçlarından dik ipte asılı ve hep yatay; siluetler tablada durur
@@ -435,9 +580,11 @@ function tartAnimasyonu(t, c, acil) {
   cancelAnimationFrame(anim);
   const r = t / c, hedef = egim(t, c), az = hareketAz(), sure = az ? 900 : 2600, t0 = performance.now(), A0 = aci;
   let acildi = false, ara = 0;
+  ses("tart");
   const adim = an => {
     const o = Math.min(1, Math.max(0, (an - t0) / sure)), u = 1 - Math.pow(1 - Math.min(1, o / 0.72), 3);
     sayac = Math.round(t * u);
+    if (o < 0.7 && an - sonTik > 75) { sonTik = an; ses("tik"); }
     if (o <= 0.72) { aci = A0 * (1 - u) + Math.pow(u, 1.5) * B22(r * u); ara = aci; }
     else {
       const e = (o - 0.72) / 0.28;
@@ -473,10 +620,12 @@ function satir(h, rol) {
     <p class="not">${not.join(" · ")}</p></div>`;
 }
 let sonCizilen = null, sonPuan = null, puanAnim = 0;
-function puanYaz(p, denge) {  // sonuç bir kez canlanır: puan 0'dan sayar, yakınlık çubuğu dolar, çip zıplar; dengede sahnede altın parıltı
+function puanYaz(p, denge, tam) {  // sonuç bir kez canlanır: puan 0'dan sayar, yakınlık çubuğu dolar, çip zıplar; dengede altın parıltı
   const yaz = k => { $("puan").textContent = `+${Math.round(p * k)} puan`; $("yakinCubuk").style.width = Math.max(2, p * k) + "%"; };
-  if (sonPuan === durum.simdi || hareketAz()) { sonPuan = durum.simdi; yaz(1); return; }
+  const yeniSonuc = sonPuan !== durum.simdi;
   sonPuan = durum.simdi;
+  if (yeniSonuc) kutla(p, tam);
+  if (!yeniSonuc || hareketAz()) { yaz(1); return; }
   cancelAnimationFrame(puanAnim);
   const t0 = performance.now();
   const adim = an => { const o = Math.min(1, Math.max(0, (an - t0) / 800)); yaz(1 - Math.pow(1 - o, 3)); if (o < 1) puanAnim = requestAnimationFrame(adim); };
@@ -508,7 +657,7 @@ function turGoster() {
     const [sinif, yazi] = t === c ? ["dengede", "Tam isabet!"] : dengede(t, c) ? ["dengede", "Dengede!"] : t < c ? ["hafif", "Hafif kaldı"] : ["agir", "Ağır bastı"];
     $("karar").className = "cip " + sinif;
     $("karar").textContent = yazi;
-    puanYaz(durum.cevap.p, dengede(t, c));
+    puanYaz(durum.cevap.p, dengede(t, c), t === c);
     $("yakin").setAttribute("aria-valuenow", durum.cevap.p);
     $("cevap").innerHTML = `Doğrusu <b>${SAYI.format(c)}</b> ${esc(B.ad)}. Senin tahminin <b>${SAYI.format(t)}</b>${sap ? ` (%${sap} ${t < c ? "eksik" : "fazla"})` : ""}.`;
     $("hayvanlar").innerHTML = satir(A, "ref") + satir(B, "hed");
@@ -516,12 +665,120 @@ function turGoster() {
   $("sTur").textContent = SAYI.format(durum.tur);
   $("sPuan").textContent = SAYI.format(durum.toplam);
   $("sOrt").textContent = durum.tur ? SAYI.format(Math.round(durum.toplam / durum.tur)) : "–";
+  const tm = mod === "tum" ? tema : "karisik";
+  $("sahne").setAttribute("data-tema", tm);
+  $("sahne").setAttribute("data-etiket", mod === "gun" ? "Günün turu" : TEMALAR[tm]);
+  $("rekorNot").hidden = !(t && rekorMesaj?.T === durum.simdi && rekorMesaj.m);
+  if (!$("rekorNot").hidden) $("rekorNot").textContent = rekorMesaj.m;
+  if (mod !== "vs") $("sonraki").textContent = mod === "gun" && durum.tur >= GUN_TUR ? "Günün sonucu" : "Sonraki tur";
+  if (mod === "gun") $("sTur").textContent = `${Math.min(durum.tur + (t ? 0 : 1), GUN_TUR)}/${GUN_TUR}`;
   hmGoster();
   yerlestir();
 }
 
+// ---- Rekorlar ve albüm (her açılan turda iki hayvan albüme girer); yalnız bu tarayıcıda
+let rekor = Object.assign({ tur: 0, tam: 0, son10: [], en10: 0, enSeri: 0, gunEnIyi: 0, vsMac: 0, vsGal: 0, vsEnYuksek: 0 }, nesne(depoOku("ht-rekor", {})));
+let album = nesne(depoOku("ht-album", {})), rekorMesaj = null;
+function turBitti(T, t, p) {  // tek kişilik, günlük ya da karşılıklı her açılan tur bir kez
+  for (const id of [T.a, T.b]) { const x = Array.isArray(album[id]) ? album[id] : [0, 0]; album[id] = [x[0] + 1, Math.max(x[1], p)]; }
+  depoYaz("ht-album", album);
+  const yeniler = [];
+  rekor.tur += 1;
+  if (t === T.c) { rekor.tam += 1; yeniler.push(`${SAYI.format(rekor.tam)}. tam isabetin`); }
+  rekor.son10 = [...(Array.isArray(rekor.son10) ? rekor.son10 : []), p].slice(-10);
+  if (rekor.son10.length === 10) {
+    const o = Math.round(rekor.son10.reduce((a, b) => a + b, 0) / 10);
+    if (o > rekor.en10) { if (rekor.en10 > 0) yeniler.push(`yeni rekor: son 10 turun ortalaması ${o}`); rekor.en10 = o; }
+  }
+  depoYaz("ht-rekor", rekor);
+  rekorMesaj = { T, m: yeniler.length ? yeniler.join(" · ").replace(/^./, c => c.toLocaleUpperCase("tr")) + "!" : "" };
+  albumCiz(); rekorCiz();
+}
+function rekorCiz() {
+  const r = rekor, sat = [["Oynanan tur", SAYI.format(r.tur)], ["Tam isabet", SAYI.format(r.tam)], ["En iyi 10 tur ort.", r.en10 || "–"],
+    ["Günün turu: en iyi", r.gunEnIyi ? `${r.gunEnIyi}/${GUN_TUR * 100}` : "–"], ["En uzun günlük seri", r.enSeri ? `${r.enSeri} gün` : "–"],
+    ["Karşılıklı maç", r.vsMac ? `${r.vsMac} (${r.vsGal} galibiyet)` : "–"], ["Karşılıklı en yüksek", r.vsEnYuksek || "–"]];
+  $("rekorlar").innerHTML = sat.map(([a, b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join("");
+}
+function albumCiz() {
+  const gor = id => Array.isArray(album[id]), tum = [...H, ...OZELLER];
+  $("albumSay").textContent = `(${tum.filter(h => gor(h.id)).length}/${tum.length})`;
+  if (!$("albumPanel").open) return;
+  const G = [["Kara hayvanları", H.filter(h => h.grup === "kara")], ["Deniz canlıları", H.filter(h => h.grup === "deniz")],
+    ["Kuşlar", H.filter(h => h.grup === "kus")], ["Kedilerin", OZELLER]].filter(g => g[1].length);
+  $("album").innerHTML = G.map(([ad, L]) => `<h3>${ad} <small>${L.filter(h => gor(h.id)).length}/${L.length}</small></h3><ul class="albumGrid">` +
+    [...L].sort((x, y) => gor(y.id) - gor(x.id) || x.ad.localeCompare(y.ad, "tr")).map(h => gor(h.id)
+      ? `<li><svg viewBox="0 0 ${h.sil[6]} ${h.sil[7]}" aria-hidden="true"><path fill-rule="evenodd" d="${h.sil[0]}"/></svg><b>${esc(h.ad)}</b>` +
+        `<span>≈ ${agirlik(h.g)}</span><span>en iyi ${album[h.id][1]}</span></li>`
+      : `<li><span class="yok" aria-hidden="true">?</span><b>???</b><span>henüz çıkmadı</span></li>`).join("") + "</ul>").join("");
+}
+$("albumPanel").addEventListener("toggle", albumCiz);
+$("rekorPanel").addEventListener("toggle", rekorCiz);
+
+// Günün turu: Türkiye tarihine göre tohum (herkese aynı 5 tur), günde bir kez; ilerleme ve seri tarayıcıda
+const GUN_TUR = 5;
+const bugun = () => new Date(Date.now() + 3 * 3600e3).toISOString().slice(0, 10);  // Türkiye UTC+3, yaz saati yok
+const gunEkle = (g, k) => new Date(Date.parse(g) + k * 864e5).toISOString().slice(0, 10);
+function gunTohum(g) { let h = 2166136261; for (const ch of "gun:" + g) h = Math.imul(h ^ ch.charCodeAt(0), 16777619); return (h >>> 0) % 2 ** 31; }
+let gun = depoOku("ht-gun", null), gunSeri = Object.assign({ son: "", seri: 0 }, nesne(depoOku("ht-seri", {})));
+function gunDurum() {
+  const g = bugun();
+  if (!gun || gun.tarih !== g || !Array.isArray(gun.s)) gun = { tarih: g, s: [] };
+  return gun;
+}
+const gunToplam = () => gun.s.reduce((a, x) => a + x[1], 0);
+const kare = p => p >= 90 ? "🟩" : p >= 60 ? "🟨" : p >= 30 ? "🟧" : "🟥";
+const seriSimdi = () => gunSeri.son === bugun() || gunSeri.son === gunEkle(bugun(), -1) ? gunSeri.seri : 0;
+function gunGir() {
+  gunDurum();
+  $("bastan").hidden = true;
+  const R = gun.s.length;
+  if (R >= GUN_TUR) return gunOzetGoster();
+  $("gunOzet").hidden = true; $("oyunKart").hidden = false;
+  durum = { tur: R, toplam: gunToplam(), simdi: vsTur(gunTohum(gun.tarih), R), cevap: null };
+  turGoster();
+  don(0, 600);
+  $("tahmin").value = "";
+  if ($("soru").getBoundingClientRect().top < 0) kaydir($("soru"), "start");
+}
+function gunBitir() {
+  if (gunSeri.son !== gun.tarih) {
+    gunSeri = { son: gun.tarih, seri: gunSeri.son === gunEkle(gun.tarih, -1) ? gunSeri.seri + 1 : 1 };
+    depoYaz("ht-seri", gunSeri);
+  }
+  rekor.enSeri = Math.max(rekor.enSeri, gunSeri.seri); rekor.gunEnIyi = Math.max(rekor.gunEnIyi, gunToplam());
+  depoYaz("ht-rekor", rekor); rekorCiz();
+}
+function gunMetni() {
+  const tarih = new Date(Date.parse(gun.tarih)).toLocaleDateString("tr-TR", { day: "numeric", month: "long", timeZone: "UTC" });
+  return `Hayvan Terazisi · Günün turu ${tarih}\n${gun.s.map(x => kare(x[1])).join("")} ${gunToplam()}/${GUN_TUR * 100}\nSeri: ${seriSimdi()} gün` +
+    (WEB ? "\n" + location.href.split("#")[0].split("?")[0] : "");
+}
+function gunOzetGoster() {
+  $("oyunKart").hidden = true; $("gunOzet").hidden = false;
+  const top = gunToplam(), L = gun.s.map((x, i) => [vsTur(gunTohum(gun.tarih), i), x]);
+  const kalan = Date.parse(gunEkle(gun.tarih, 1)) - 3 * 3600e3 - Date.now(), sa = Math.max(0, Math.floor(kalan / 3600e3)), dk = Math.max(0, Math.floor(kalan % 3600e3 / 6e4));
+  $("sTur").textContent = `${GUN_TUR}/${GUN_TUR}`; $("sPuan").textContent = SAYI.format(top); $("sOrt").textContent = SAYI.format(Math.round(top / GUN_TUR));
+  $("gunOzet").innerHTML = `<h2>Günün turu bitti</h2><p class="kareler" aria-label="Tur puanları">${gun.s.map(x => kare(x[1])).join("")}</p>
+    <p class="gunPuan">${SAYI.format(top)} <small>/ ${GUN_TUR * 100}</small></p>
+    <dl class="gunBilgi"><div><dt>Seri</dt><dd>${seriSimdi()} gün</dd></div><div><dt>En uzun seri</dt><dd>${rekor.enSeri} gün</dd></div>
+      <div><dt>En iyi gün</dt><dd>${SAYI.format(rekor.gunEnIyi)}</dd></div></dl>
+    <ol class="gunTurlar">${L.map(([T, [t, p]]) => { const A = BIL.get(T.a), B = BIL.get(T.b);
+      return `<li>${SOZ[T.n]} ${esc(A.ad)} = <b>${SAYI.format(T.c)}</b> ${esc(B.ad)} · sen ${SAYI.format(t)} <b>+${p}</b></li>`; }).join("")}</ol>
+    <button class="ana" type="button" data-is="paylas">Sonucu paylaş</button>
+    <p class="bilgiNot" id="gunPaylasNot" hidden></p>
+    <p class="bilgiNot">Bugünün turları herkese aynı: puanlarınızı karşılaştırın. Yeni günün turu ${sa} sa ${dk} dk sonra.</p>`;
+}
+function gunPaylas() {
+  const metin = gunMetni(), not = m => { const el = $("gunPaylasNot"); el.hidden = false; el.innerHTML = m; };
+  const elle = () => not(`Kopyalanamadı; metni basılı tutup kopyala:<span class="paylasMetin">${esc(metin)}</span>`);
+  if (WEB && navigator.share) { navigator.share({ text: metin }).catch(() => {}); return; }
+  try { navigator.clipboard.writeText(metin).then(() => not("Kopyalandı. WhatsApp'a ya da mesaja yapıştırabilirsin."), elle); } catch (e) { elle(); }
+}
+$("gunOzet").addEventListener("click", e => { if (e.target.closest?.("[data-is=paylas]")) gunPaylas(); });
+
 function yeni() {
-  durum.simdi = yeniTur(OZELLER.length > 0 && (mod === "benim" || Math.random() < OZEL_PAY));
+  durum.simdi = yeniTur(OZELLER.length > 0 && (mod === "benim" || (tema === "karisik" && Math.random() < OZEL_PAY)));
   durum.cevap = null;
   turGoster();
   don(0, 600);
@@ -579,6 +836,8 @@ $("form").addEventListener("submit", e => {
   durum.cevap = { t, p: puan(t, c) };
   durum.tur += 1;
   durum.toplam += durum.cevap.p;
+  if (mod === "gun") { gunDurum().s.push([t, durum.cevap.p]); depoYaz("ht-gun", gun); if (gun.s.length >= GUN_TUR) gunBitir(); }
+  turBitti(durum.simdi, t, durum.cevap.p);
   $("hata").textContent = "";
   $("tahmin").readOnly = true;
   $("tart").disabled = true;
@@ -587,7 +846,7 @@ $("form").addEventListener("submit", e => {
   if (r.top < 0 || r.bottom > innerHeight) kaydir($("sahne"), "center");
   tartAnimasyonu(t, c, () => { turGoster(); kaydir($("sonraki"), "nearest"); $("sonraki").focus({ preventScroll: true }); });
 });
-$("sonraki").addEventListener("click", () => mod === "vs" ? vsSonraki() : yeni());
+$("sonraki").addEventListener("click", () => mod === "vs" ? vsSonraki() : mod === "gun" ? gunGir() : yeni());
 $("bastan").addEventListener("click", () => { durum.tur = 0; durum.toplam = 0; yeni(); });
 
 // ---- Karşılıklı mod: iki telefon, claude.ai "room" yeteneği. Yalnız presence kullanılır (herkese açık değil ama davetli herkes
@@ -616,7 +875,7 @@ function oyuncu(p) {  // başkasının presence'ı güvenilmez: yalnız beklenen
   if (!v || typeof v !== "object" || typeof v.ad !== "string") return null;
   return { peer: p.peer, ben: false, ad: v.ad.trim().slice(0, 20) || "Rakip", t: sinirli(v.t, 0, 1e14) ?? 0, s: sinirli(v.s, 0, 2 ** 31),
     m: sinirli(v.m, 0, 2 ** 31), r: sinirli(v.r, 0, VS_TUR - 1) ?? 0, g: sinirli(v.g, 0, 1e9), gr: sinirli(v.gr, 0, VS_TUR - 1),
-    top: sinirli(v.top, 0, 100 * VS_TUR) ?? 0, rov: sinirli(v.rov, 0, 2 ** 31) };
+    top: sinirli(v.top, 0, 100 * VS_TUR) ?? 0, tr: sinirli(v.tr, 0, VS_TUR - 1), rov: sinirli(v.rov, 0, 2 ** 31) };
 }
 const benYaz = () => { oda?.presence({ vs: { ...ben } }).catch(() => {}); };
 function vsOyuncular() {  // katılma sırasına göre ilk iki kişi oynar
@@ -637,7 +896,7 @@ function vsCiz() {
   $("vs").hidden = false;
   $("vsGiris").hidden = !!ben || odaDurum === "yok";
   $("sohbet").hidden = !(ben && odaDurum === "hazir");
-  $("kiyas").hidden = true;
+  $("kiyas").hidden = true; $("macOzet").hidden = true;
   const bekle = metin => { vsDurum(metin); $("oyunKart").hidden = true; vsOyuncuYaz(null); saatKur(); };
   if (odaDurum === "yok") return bekle("Karşılıklı mod burada açılamadı: ikinizin de sayfayı claude.ai hesabıyla açması gerekiyor. Herkese açık linkle girenler bağlanamıyor.");
   if (!ben) return bekle(WEB ? (odaHata ? odaHata + " " : "") + "Adını yaz. Oda kurmak için kodu boş bırak; rakibin sana çıkan 4 haneli kodu yazıp katılsın."
@@ -660,7 +919,12 @@ function vsCiz() {
   vsR = R;
   // tahmin 0 = süre doldu, boş geçti
   const bt = ben.gr === R ? ben.g : null, ot = on.gr === R ? on.g : null, acik = bt != null && ot != null;
-  if (acik && (ben.tr == null || ben.tr < R)) { ben.top += puan(bt, T.c); ben.tr = R; benYaz(); }
+  if (acik && (ben.tr == null || ben.tr < R)) {
+    ben.top += puan(bt, T.c); ben.tr = R; benYaz();
+    const K = vsKayit.get(mac) || vsKayit.set(mac, []).get(mac);
+    K[R] = [BIL.get(T.a).ad, BIL.get(T.b).ad, T.n, T.c, bt, ot, puan(bt, T.c), puan(ot, T.c), R];
+    turBitti(T, bt, puan(bt, T.c));
+  }
   const bp = acik ? puan(bt, T.c) : 0, op = acik ? puan(ot, T.c) : 0;
   vsOyuncuYaz(on, [acik ? `bu tur +${bp}` : bt != null ? "tahmin verdi ✓" : "düşünüyor…", acik ? `bu tur +${op}` : ot != null ? "tahmin verdi ✓" : "düşünüyor…"]);
   saatKur(mac + ":" + R, bt, ot, on.ad);
@@ -699,6 +963,7 @@ function vsCiz() {
   $("kiyas").innerHTML = [[ben.ad + " (sen)", bt, bp, op], [on.ad, ot, op, bp]].map(([a, t, p, diger]) =>
     `<li class="${p > diger ? "kazandi" : ""}"><span>${esc(a)}: <b>${t ? SAYI.format(t) : "süre doldu"}</b></span><b>+${p}</b></li>`).join("");
   $("kiyas").hidden = false;
+  if (son && on.tr === R) macBitti(mac, on);
   const bekliyor = son ? ben.rov === mac : ben.r > R;
   $("sonraki").textContent = bekliyor ? `${on.ad} bekleniyor…` : son ? "Rövanş" : "Sonraki tur";
   $("sonraki").disabled = bekliyor;
@@ -719,6 +984,7 @@ function saatTik() {
   $("sure").hidden = false;
   $("sureYazi").textContent = saat.kim === "ben" ? `${saat.on} tahminini verdi: ${sn} saniyen kaldı` : `${saat.on} için ${sn} saniye kaldı`;
   $("sureCubuk").style.width = (kalan / VS_SURE * 100) + "%";
+  if (saat.kim === "ben" && sn <= 5 && sn > 0 && saat.sonSn !== sn) { saat.sonSn = sn; ses("sure"); }
   if (kalan > 0) { saatZaman = setTimeout(saatTik, 250); return; }
   if (saat.kim === "ben" && !saat.bitti) { saat.bitti = true; vsSureDoldu(); }
 }
@@ -730,6 +996,48 @@ function vsSureDoldu() {
   benYaz();
   vsCiz();
 }
+// Maç sonu: tur tur tablo, en yakın tahmin, aranızdaki skor; maç bir kez arşive girer (yalnız bu telefonda, en çok 200 maç)
+const vsKayit = new Map();
+let arsiv = depoOku("ht-arsiv", []);
+if (!Array.isArray(arsiv)) arsiv = [];
+function macTablo(turlar, benAd, onAd) {
+  return `<div class="tabloKap"><table class="macTablo"><thead><tr><th>Tur</th><th>Doğru</th><th>${esc(benAd)}</th><th>${esc(onAd)}</th></tr></thead><tbody>` +
+    turlar.map(([aAd, bAd, n, c, bt, ot, bp, op, R]) => `<tr><td>${R + 1}<small>${esc(n + " " + aAd)} → ${esc(bAd)}</small></td><td>${SAYI.format(c)}</td>` +
+      `<td class="${bp > op ? "iyi" : ""}">${bt ? SAYI.format(bt) : "süre doldu"}<small>+${bp}</small></td>` +
+      `<td class="${op > bp ? "iyi" : ""}">${ot ? SAYI.format(ot) : "süre doldu"}<small>+${op}</small></td></tr>`).join("") + "</tbody></table></div>";
+}
+const ayniAd = (x, y) => x.toLocaleLowerCase("tr") === y.toLocaleLowerCase("tr");
+function aramizda(onAd) {
+  const L = arsiv.filter(x => ayniAd(x.on, onAd));
+  return [L.filter(x => x.bp > x.op).length, L.filter(x => x.bp < x.op).length, L.filter(x => x.bp === x.op).length];
+}
+function macBitti(mac, on) {
+  const turlar = (vsKayit.get(mac) || []).filter(Boolean);
+  if (!arsiv.some(x => x.mac === mac)) {
+    arsiv = [...arsiv, { mac, t: Date.now(), ben: ben.ad, on: on.ad, bp: ben.top, op: on.top, turlar }].slice(-200);
+    depoYaz("ht-arsiv", arsiv);
+    rekor.vsMac += 1; if (ben.top > on.top) rekor.vsGal += 1; rekor.vsEnYuksek = Math.max(rekor.vsEnYuksek, ben.top);
+    depoYaz("ht-rekor", rekor); rekorCiz(); arsivCiz();
+    if (ben.top > on.top) konfeti();
+  }
+  const enIyi = turlar.flatMap(x => [[x[6], ben.ad, x[8]], [x[7], on.ad, x[8]]]).sort((a, b) => b[0] - a[0])[0], [g, m, b] = aramizda(on.ad);
+  $("macOzet").innerHTML = `<h3>Maç özeti</h3>` + macTablo(turlar, ben.ad + " (sen)", on.ad) +
+    (enIyi ? `<p>En yakın tahmin: <b>${esc(enIyi[1])}</b>, ${enIyi[2] + 1}. tur (+${enIyi[0]}).</p>` : "") +
+    `<p>Aranızdaki skor: <b>${esc(ben.ad)} ${g} – ${m} ${esc(on.ad)}</b>${b ? ` (${b} berabere)` : ""}.</p>`;
+  $("macOzet").hidden = false;
+}
+function arsivCiz() {
+  $("arsivSay").textContent = arsiv.length ? `(${arsiv.length})` : "";
+  if (!$("arsivPanel").open) return;
+  if (!arsiv.length) { $("arsiv").innerHTML = `<p class="bos">Henüz maç yok. Karşılıklı modda biten her maç buraya kaydedilir (yalnız bu telefonda).</p>`; return; }
+  const rakipler = [...new Set(arsiv.map(x => x.on.toLocaleLowerCase("tr")))].map(k => arsiv.find(x => x.on.toLocaleLowerCase("tr") === k).on);
+  const tarih = t => new Date(t).toLocaleString("tr-TR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+  $("arsiv").innerHTML = rakipler.map(o => { const [g, m, b] = aramizda(o); return `<p>${esc(o)} ile: <b>${g} – ${m}</b>${b ? ` (${b} berabere)` : ""}</p>`; }).join("") +
+    `<ol class="arsivListe">` + [...arsiv].reverse().map(x => `<li><details><summary><span class="tarih">${tarih(x.t)}</span><span>` +
+      `<b class="${x.bp > x.op ? "kazandi" : ""}">${esc(x.ben)} ${x.bp}</b> – <b class="${x.op > x.bp ? "kazandi" : ""}">${x.op} ${esc(x.on)}</b></span></summary>` +
+      macTablo(Array.isArray(x.turlar) ? x.turlar : [], x.ben, x.on) + `</details></li>`).join("") + "</ol>";
+}
+$("arsivPanel").addEventListener("toggle", arsivCiz);
 function vsBaslik(R, on) {
   $("sTur").textContent = `${R + 1}/${VS_TUR}`;
   $("sPuan").textContent = SAYI.format(ben.top);
@@ -783,20 +1091,32 @@ function sohbetAl() {
       const no = Array.isArray(x) ? sinirli(x[0], 1, 1e9) : null, m = no && typeof x[1] === "string" ? x[1].trim().slice(0, 200) : "";
       if (!m || shGor.has(p.peer + ":" + no)) continue;
       shGor.add(p.peer + ":" + no); shLog.push({ ad: o.ad, m, ben: false }); yeni = true;
+      if (TEPKI.includes(m)) ucur(m, false);
     }
   }
-  if (yeni) sohbetCiz();
+  if (yeni) { sohbetCiz(); ses("mesaj"); }
 }
-$("sohbetForm").addEventListener("submit", e => {
-  e.preventDefault();
-  const m = $("mesaj").value.trim().slice(0, 200);
-  if (!m || !ben || !oda) return;
+function mesajGonder(m) {
+  m = m.trim().slice(0, 200);
+  if (!m || !ben || !oda) return false;
   shBen = [...shBen, [++shNo, m]].slice(-SH_BOY);
   oda.presence({ sh: shBen }).catch(() => {});
   shLog.push({ ad: ben.ad, m, ben: true });
-  $("mesaj").value = "";
   sohbetCiz();
-});
+  if (TEPKI.includes(m)) ucur(m, true);
+  return true;
+}
+$("sohbetForm").addEventListener("submit", e => { e.preventDefault(); if (mesajGonder($("mesaj").value)) $("mesaj").value = ""; });
+// Hızlı tepki: tek dokunuşla emoji gider, iki ekranda da terazinin üstünden uçar
+const TEPKI = ["😂", "😮", "👏", "😭", "🔥", "❤️"];
+function ucur(e, benden) {
+  if (!document.createElement || hareketAz()) return;
+  const el = document.createElement("span");
+  el.className = "ucan"; el.textContent = e; el.style.left = (benden ? 12 : 62) + Math.random() * 20 + "%";
+  $("ucanlar").append(el);
+  setTimeout(() => el.remove(), 2000);
+}
+$("tepkiler").addEventListener("click", e => { const b = e.target.closest?.("button"); if (b) mesajGonder(b.dataset.e); });
 // Web sürümü (GitHub Pages, claude.ai dışında): oda, PeerJS ile iki telefon arasında doğrudan bağlantı. Kodu boş bırakan oda kurar
 // (4 haneli kod çıkar), diğeri o kodu yazıp katılır. Bu küçük nesne, oyunun kullandığı room çağrılarını (presence, peers, onPeers,
 // onConnection, connected) taklit eder; böylece oyun kodu iki sürümde aynı kalır. 2 kişilik: üçüncü bağlantı kapatılır
@@ -884,35 +1204,46 @@ function vsGir() {
 function vsCik() {
   if (ben) oda?.presence({ vs: null, sh: null }).catch(() => {});
   if (WEB) { webPeer?.kapat(); webPeer = null; oda = null; odaKod = ""; odaHata = ""; odaDurum = "giris"; }
-  ben = null; vsAnimde = false; shBen = []; shLog = []; sohbetCiz(); saatKur();
+  ben = null; vsAnimde = false; shBen = []; shLog = []; sohbetCiz(); saatKur(); $("macOzet").hidden = true;
   $("vs").hidden = true; $("sohbet").hidden = true; $("oyunKart").hidden = false; $("kiyas").hidden = true; $("bastan").hidden = false;
   $("dtOrt").textContent = "Ort."; $("sonraki").textContent = "Sonraki tur"; $("sonraki").disabled = false;
 }
 
+const MODLAR = [["modTum", "tum"], ["modGun", "gun"], ["modBenim", "benim"], ["modVs", "vs"]];
 function modYaz() {
   $("modBenim").hidden = !OZELLER.length;
-  for (const [id, m] of [["modTum", "tum"], ["modBenim", "benim"], ["modVs", "vs"]]) $(id).setAttribute("aria-pressed", String(mod === m));
+  for (const [id, m] of MODLAR) $(id).setAttribute("aria-pressed", String(mod === m));
+  $("temalar").hidden = mod !== "tum";
+  for (const b of $("temalar").querySelectorAll?.("button") || []) b.setAttribute("aria-pressed", String(b.dataset.tema === tema));
 }
-for (const [id, m] of [["modTum", "tum"], ["modBenim", "benim"], ["modVs", "vs"]]) {
+for (const [id, m] of MODLAR) {
   $(id).addEventListener("click", () => {
     if (mod === m) return;
     if (mod === "vs") vsCik();
+    if (mod === "gun") { $("gunOzet").hidden = true; $("oyunKart").hidden = false; $("bastan").hidden = false; }
+    if (mod === "vs" || mod === "gun" || m === "vs" || m === "gun") durum = { tur: 0, toplam: 0, simdi: null, cevap: null };
     mod = m;
     try { localStorage.setItem("ht-mod", m); } catch (e) {}
     modYaz();
-    if (m === "vs") { durum = { tur: 0, toplam: 0, simdi: null, cevap: null }; vsGir(); } else yeni();
+    if (m === "vs") vsGir(); else if (m === "gun") gunGir(); else yeni();
   });
 }
-modYaz();
+$("temalar").addEventListener("click", e => {
+  const b = e.target.closest?.("button"), t = b?.dataset.tema;
+  if (!t || t === tema || !(t in TEMALAR)) return;
+  tema = t; depoYaz("ht-tema", t); modYaz(); yeni();
+});
+modYaz(); sesYaz(); rekorCiz(); albumCiz(); arsivCiz();
 odaBaglan();
 new ResizeObserver(yerlestir).observe($("sahne"));
 document.fonts?.ready.then(yerlestir);
 
 function basla(d) {
   if (mod === "vs") return vsGir();
+  if (mod === "gun") return gunGir();
   const s = d?.durum?.simdi;
-  if (d?.mod && d.mod !== "vs" && OZELLER.length) { mod = d.mod; modYaz(); }
-  if (s && BIL.has(s.a) && BIL.has(s.b)) { durum = d.durum; aci = durum.cevap ? egim(durum.cevap.t, s.c) : 0; turGoster(); }
+  if (d?.mod && d.mod !== "vs" && d.mod !== "gun" && OZELLER.length) { mod = d.mod; modYaz(); }
+  if (s && BIL.has(s.a) && BIL.has(s.b)) { durum = d.durum; sonPuan = durum.simdi; aci = durum.cevap ? egim(durum.cevap.t, s.c) : 0; turGoster(); }
   else yeni();
 }
 window.claude?.hot?.snapshot?.(() => ({ durum, mod }));
