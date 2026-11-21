@@ -289,7 +289,7 @@ details p { margin: 8px 0 0; max-width: 65ch; }
   </details>
   <details>
     <summary>Nasıl puan alırım?</summary>
-    <p>Puan, doğru sayıya ne kadar yaklaştığına bağlı. Tam isabet 100 puan. Doğrusu 20 iken: 21 dersen 93, 22 dersen 87, 25 dersen 70, 30 dersen 50, 10 ya da 40 dersen 25, 5 ya da 80 dersen 0. Yani yarısı ya da iki katı 25 puan, dört kat ve ötesi 0. Doğrudan en çok %5 sapan tahminde terazi dengede kalır. Hesap makinesiyle ağırlıkları kafanda bölüp çarpabilirsin; "Tahmine yaz" sonucu yuvarlayıp kutuya koyar. "Benim hayvanlarım" modunda her turda kedilerinden biri var; diğer modda da arada bir çıkarlar.</p>
+    <p>Puan, doğru sayıya ne kadar yaklaştığına bağlı: 100'den sapma yüzdesi düşülür, fazla ve eksik aynı sayılır. Doğrusu 100 iken: 100 dersen 100, 90 ya da 110 dersen 90, 75 ya da 125 dersen 75, 50 ya da 150 dersen 50, 200 ve üstü dersen 0. Doğrudan en çok %5 sapan tahminde terazi dengede kalır. Hesap makinesiyle ağırlıkları kafanda bölüp çarpabilirsin; "Tahmine yaz" sonucu yuvarlayıp kutuya koyar. "Benim hayvanlarım" modunda her turda kedilerinden biri var; diğer modda da arada bir çıkarlar.</p>
   </details>
   <details>
     <summary>Ağırlıklar, resimler ve bilgiler nereden geliyor?</summary>
@@ -306,7 +306,7 @@ const H = VERI.filter(v => SIL[v[1]]).map(([ad, bil, g, sl, em, sinif, kaynak, w
 const OZELLER = SIL["Felis catus"] ? OZEL.map(([ad, g, bilgi]) =>
   ({ id: "ozel:" + ad, ad, bil: "Felis catus", g, kaynak: "senin söylediğin", wiki: null, sil: SIL["Felis catus"], bilgi: [bilgi, ""], ozel: true, grup: "kara" })) : [];
 const BIL = new Map([...H, ...OZELLER].map(h => [h.id, h]));
-const TOL = 0.05, SIFIR = 4, SON_BOY = 160, OZEL_PAY = 1 / 6, SOZ = ["", "Bir", "İki", "Üç", "Dört", "Beş"];
+const TOL = 0.05, SON_BOY = 160, OZEL_PAY = 1 / 6, SOZ = ["", "Bir", "İki", "Üç", "Dört", "Beş"];
 // Eşleşme: önce iki grup seçilir (kara memelisi, deniz canlısı, kuş); %70 farklı grup, kuş payı düşük. TERS: bilinen kefe sağda
 const GRUP_PAY = [["kara", 0.4], ["deniz", 0.35], ["kus", 0.25]], AYNI_GRUP = 0.3, TERS_PAY = 0.35;
 const SAYI = new Intl.NumberFormat("tr-TR"), ONDA = new Intl.NumberFormat("tr-TR", { maximumFractionDigits: 1 });
@@ -315,14 +315,13 @@ const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;",
 const hareketAz = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
 const kaydir = (el, blok) => el.scrollIntoView({ block: blok, behavior: hareketAz() ? "auto" : "smooth" });
 
-// Puan: doğru sayıya yakınlık (oran, fazla/eksik simetrik): tam isabet 100, yarısı/iki katı 25, 4 kat yanılgıda 0; arası (1 − s/ln4)².
+// Puan: 100 − sapma yüzdesi; fark aynıysa fazla ve eksik aynı puan (doğrusu 100: 50 de 150 de 50 puan), iki katı ve ötesi 0.
 // ±%5 içinde terazi dengede. Eğim örnek oyundaki gibi 15·ln(oran), en çok ±22°
 const dengede = (t, d) => Math.abs(Math.log(t / d)) <= Math.log(1 + TOL);
 const B22 = x => x > 0 && isFinite(x) ? Math.max(-22, Math.min(22, 15 * Math.log(x))) : -22;
 function puan(t, d) {
   if (!(t > 0)) return 0;  // süre doldu, tahmin yok
-  const s = Math.abs(Math.log(t / d));
-  return Math.max(0, Math.round(100 * Math.pow(Math.max(0, 1 - s / Math.log(SIFIR)), 2)));
+  return Math.max(0, Math.round(100 * (1 - Math.abs(t - d) / d)));
 }
 function egim(t, d) { return dengede(t, d) ? 0 : B22(t / d); }
 function agirlik(g) {
