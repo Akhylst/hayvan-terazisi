@@ -88,8 +88,6 @@ h1 small { display: block; font: 500 .72rem/1.3 var(--f); letter-spacing: .04em;
 .carpan { position: absolute; left: 0; top: 0; padding: 2px 9px; border-radius: 999px; background: var(--kart); box-shadow: var(--golge);
   font: 800 clamp(14px, 3.4vw, 20px)/1.2 var(--fb); white-space: nowrap; font-variant-numeric: tabular-nums; }
 .carpan.sol { color: var(--mavi-m); border: 1.5px solid var(--mavi); } .carpan.sag { color: var(--mercan-m); border: 1.5px solid var(--mercan); }
-@keyframes nefes { 50% { scale: 1.1; } }
-.carpan.bekle { animation: nefes 1.6s ease-in-out infinite; }
 .carpan.dogru { color: var(--soluk); font-size: clamp(12px, 2.8vw, 16px); font-weight: 700; border: 1px dashed var(--cizgi); }
 /* Tahmin, süre ve hesap makinesi */
 form { display: flex; gap: 8px; }
@@ -184,7 +182,7 @@ details p { margin: 8px 0 0; max-width: 65ch; }
   .soru { font-size: 1.35rem; }
 }
 @media (min-width: 700px) { .hayvanlar { grid-template-columns: 1fr 1fr; } }
-@media (prefers-reduced-motion: reduce) { button, .sure .cubuk i, .modlar button { transition: none; } .carpan.bekle { animation: none; } }
+@media (prefers-reduced-motion: reduce) { button, .sure .cubuk i, .modlar button { transition: none; } }
 </style>
 
 </head>
@@ -426,7 +424,6 @@ function yerlestir() {
   $("carSol").textContent = "× " + durum.simdi.n;
   etiket($("carSol"), kR, sol._w, 0, 0);
   $("carSag").textContent = "× " + (sayac == null ? "?" : SAYI.format(sayac));
-  $("carSag").className = "carpan sag" + (sayac == null ? " bekle" : "");
   const ws = $("carSag").offsetWidth, wd = dg.hidden ? 0 : dg.offsetWidth;
   const hs = etiket($("carSag"), kH, sag._w, 0, dg.hidden ? 0 : -(wd + 6) / 2);
   if (!dg.hidden) etiket(dg, kH, sag._w, hs / 2 + 4 + dg.offsetHeight / 2, ws / 2 + 3);  // alttayken ikisi yan yana, arada 6 px
