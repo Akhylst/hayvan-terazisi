@@ -384,9 +384,11 @@ function yeniTur(kediTuru) {
 // Kaldıraç: kol mil etrafında döner, tablalar kol uçlarından dik ipte asılı ve hep yatay; siluetler tablada durur
 let aci = 0, anim = 0, sayac = null;
 function cizgi(id, x1, y1, x2, y2) { const e = $(id); e.setAttribute("x1", x1); e.setAttribute("y1", y1); e.setAttribute("x2", x2); e.setAttribute("y2", y2); }
-function boyut(el, uzun) {
-  const o = el._o || 1;
-  el._w = o >= 1 ? uzun : uzun * o; el._h = o >= 1 ? uzun / o : uzun;
+// İki hayvan aynı büyüklükte görünür (resimden ağırlık anlaşılmasın): kutu alanı kenar² (uzun ince balık ile tıknaz penguen eşit
+// kaplar), uzun kenar en çok 1,7 kenar
+function boyut(el, kenar) {
+  const o = el._o || 1, k = Math.min(1, 1.7 / Math.sqrt(Math.max(o, 1 / o)));
+  el._w = kenar * Math.sqrt(o) * k; el._h = kenar / Math.sqrt(o) * k;
   el.style.width = el._w + "px"; el.style.height = el._h + "px";
 }
 // Siluet SVG yolu (gömülü resim değil: herkese açık paylaşım incelemesi çok resimli sayfayı geri çeviriyor)
@@ -401,9 +403,9 @@ function yerlestir() {
   cizgi("cIpSol", c, u, c, p); cizgi("cIpSag", m, f, m, x); cizgi("cTablaSol", c - yari, p, c + yari, p); cizgi("cTablaSag", m - yari, x, m + yari, x);
   const mil = $("cMil"); mil.setAttribute("cx", px); mil.setAttribute("cy", py); mil.setAttribute("r", Math.max(6, 12 * s));
   if (!durum.simdi) return;
-  // telefonda siluetler küçülmesin diye en az 48/58 px; ağır olan biraz büyük görünsün
-  const A = BIL.get(durum.simdi.a), B = BIL.get(durum.simdi.b), tb = Math.max(48, 84 * s), sol = $("silSol"), sag = $("silSag");
-  boyut(sol, Math.max(tb * 1.1, Math.min(Math.max(58, 170 * s), tb * Math.cbrt(A.g / B.g))));
+  // telefonda siluetler küçülmesin diye en az 46 px; iki taraf aynı boy
+  const tb = Math.max(46, 80 * s), sol = $("silSol"), sag = $("silSag");
+  boyut(sol, tb);
   boyut(sag, tb);
   const dy = Math.max(14, 32 * s);
   // kefe: [siluet ortası, tabla yüksekliği, etiketin en soldaki yeri]; sol kefede siluet ortada, sağ kefede etikete yer için biraz solda
