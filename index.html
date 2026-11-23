@@ -4,6 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <script src="https://cdn.jsdelivr.net/npm/peerjs@1.5.4/dist/peerjs.min.js"></script>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="ikon-180.png">
+<link rel="icon" href="ikon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Hayvan Terazisi">
+<meta name="theme-color" content="#eceef1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0f1012" media="(prefers-color-scheme: dark)">
 <title>Hayvan Terazisi</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -257,6 +264,7 @@ button.siraOge[aria-pressed="true"] .no, .siraOge.sonucta .no { border: 0; backg
 .siraOge.dogru { border-color: var(--yesil); background: var(--yesil-yumusak); } .siraOge.dogru .senin { color: var(--yesil); }
 .siraOge.yanlis .senin { color: var(--mercan-m); }
 .siraDug { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; }
+.evLink { justify-self: center; padding: 8px 16px; border-radius: 999px; color: var(--soluk); font-weight: 600; font-size: .9rem; text-decoration: none; }
 </style>
 
 </head>
@@ -405,6 +413,7 @@ button.siraOge[aria-pressed="true"] .no, .siraOge.sonucta .no { border: 0; backg
     <summary>Ağırlıklar, resimler ve bilgiler nereden geliyor?</summary>
     <p>Her hayvan için ortalama bir yetişkinin ağırlığı kullanılıyor. Memeli ve kuş ağırlıkları EltonTraits 1.0 veri setinden (Wilman ve ark., 2014, Ecology); kuşların değerleri oraya Dunning'in kuş ağırlıkları el kitabından (2008) alınmış. AnAge veri tabanı (Tacutu ve ark., 2018) bu değerle uyuştuğunda ikisinin ortalaması alındı; kaynakları birbirini tutmayan türler oyuna konmadı. Balık, köpek balığı, ahtapot, kalamar, ıstakoz ve deniz kaplumbağalarının ağırlığı bu veri setlerinde yok; onlar için yaklaşık ortalama yetişkin ağırlığı el ile derlendi, sonuçta da öyle yazıyor. Çok az bilinen türler oyuna alınmadı. Evcil hayvanların ağırlığı AnAge'in evcil kayıtlarından, kedilerinin ağırlığı senin söylediğin. Siluetler PhyloPic'ten (phylopic.org): her hayvanın çizeri ve lisansı sonuçta yazıyor, türün kendi çizimi yoksa yakın akrabasınınki kullanılıyor. Kısa bilgi cümleleri Türkçe Vikipedi'den, beslenme ve etkinlik EltonTraits'ten, en uzun ömür AnAge'den. Türkçe adlar Wikidata ve Türkçe Vikipedi'den.</p>
   </details>
+  <a class="evLink" id="evLink" href="/" hidden>🏠 Bizim Oyunlar</a>
 </div>
 
 <script>
@@ -1340,6 +1349,10 @@ $("temalar").addEventListener("click", e => {
   tema = t; depoYaz("ht-tema", t); modYaz(); yeni();
 });
 modYaz(); sesYaz(); rekorCiz(); albumCiz(); arsivCiz();
+if (WEB) {  // GitHub Pages sürümü: "Bizim Oyunlar"a dönüş ve ana ekrana eklenince internetsiz açılış (sw.js; karşılıklı mod internet ister)
+  $("evLink").hidden = false;
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+}
 odaBaglan();
 new ResizeObserver(yerlestir).observe($("sahne"));
 document.fonts?.ready.then(yerlestir);
