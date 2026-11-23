@@ -183,7 +183,7 @@ details p { margin: 8px 0 0; max-width: 65ch; }
   box-shadow: var(--golge); display: grid; place-items: center; }
 .sesDug svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .sesDug[aria-pressed="false"] .dalga, .sesDug[aria-pressed="true"] .carpi { display: none; }
-@media (max-width: 479px) { .modlar { grid-auto-flow: row; grid-template-columns: 1fr 1fr; } }
+@media (max-width: 479px) { .modlar { grid-auto-flow: row; grid-template-columns: 1fr 1fr; } .modlar button:last-child { grid-column: 1 / -1; } }
 .temalar { display: flex; flex-wrap: wrap; gap: 6px; }
 .temalar button { min-height: 36px; padding: 0 14px; border-radius: 999px; background: var(--kart); border: 1px solid var(--cizgi); color: var(--soluk); font-size: .88rem; }
 .temalar button[aria-pressed="true"] { background: var(--murekkep); color: var(--kart); border-color: transparent; }
@@ -242,6 +242,21 @@ details p { margin: 8px 0 0; max-width: 65ch; }
 }
 @media (min-width: 700px) { .hayvanlar { grid-template-columns: 1fr 1fr; } }
 @media (prefers-reduced-motion: reduce) { button, .sure .cubuk i, .modlar button { transition: none; } .ucan { display: none; } }
+/* Sırala modu (24 Kas): 5 hayvan, en ağırdan başlayarak dokunulur; siluetler eşit kutuda (boyut ipucu vermesin); tartınca doğru sıra + ağırlıklar */
+.siraKart .soru small { display: block; margin-top: 3px; font: 500 .86rem/1.3 var(--f); color: var(--soluk); letter-spacing: 0; }
+.siraListe { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.siraOge { width: 100%; display: grid; grid-template-columns: 32px 60px minmax(0, 1fr) auto; align-items: center; gap: 10px; min-height: 64px; padding: 6px 12px;
+  border-radius: 16px; background: var(--kart-2); border: 1.5px solid var(--cizgi); color: var(--murekkep); text-align: left; font: 600 1rem/1.25 var(--f); }
+button.siraOge { cursor: pointer; transition: border-color .15s, background-color .15s; }
+button.siraOge[aria-pressed="true"] { border-color: var(--mavi); background: color-mix(in srgb, var(--mavi) 9%, var(--kart)); }
+.siraOge .no { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 800 1rem/1 var(--fb); border: 1.5px dashed var(--cizgi); color: var(--soluk); }
+button.siraOge[aria-pressed="true"] .no, .siraOge.sonucta .no { border: 0; background: var(--mavi); color: #fff; }
+.siraOge svg { width: 60px; height: 46px; fill: var(--murekkep); opacity: .88; }
+.siraOge .ad i { display: block; font-style: normal; font-size: .86rem; font-weight: 600; color: var(--soluk); font-variant-numeric: tabular-nums; }
+.siraOge .senin { font-weight: 800; font-size: .86rem; white-space: nowrap; }
+.siraOge.dogru { border-color: var(--yesil); background: var(--yesil-yumusak); } .siraOge.dogru .senin { color: var(--yesil); }
+.siraOge.yanlis .senin { color: var(--mercan-m); }
+.siraDug { display: grid; grid-template-columns: 1fr 1.4fr; gap: 8px; }
 </style>
 
 </head>
@@ -261,12 +276,13 @@ details p { margin: 8px 0 0; max-width: 65ch; }
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9.5h3.5L12 5.5v13l-4.5-4H4z"/><path class="dalga" d="M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11"/><path class="carpi" d="M16 9.5l5 5M21 9.5l-5 5"/></svg>
     </button></div>
   </header>
-  <p class="ipucu">Teraziyi dengelemek için soru işaretli kefeye kaç tane koymalısın?</p>
+  <p class="ipucu" id="ipucu">Teraziyi dengelemek için soru işaretli kefeye kaç tane koymalısın?</p>
   <div class="modlar" id="modlar" role="group" aria-label="Oyun modu">
     <button type="button" id="modTum" aria-pressed="true">Tüm hayvanlar</button>
     <button type="button" id="modGun" aria-pressed="false">Günün turu</button>
     <button type="button" id="modBenim" aria-pressed="false">Benim hayvanlarım</button>
     <button type="button" id="modVs" aria-pressed="false">Karşılıklı</button>
+    <button type="button" id="modSira" aria-pressed="false">Sırala</button>
   </div>
   <div class="temalar" id="temalar" role="group" aria-label="Tema">
     <button type="button" data-tema="karisik" aria-pressed="true">Karışık</button><button type="button" data-tema="kara" aria-pressed="false">Kara</button>
@@ -356,6 +372,16 @@ details p { margin: 8px 0 0; max-width: 65ch; }
     </section>
   </main>
   <section class="kart gunOzet" id="gunOzet" aria-live="polite" hidden></section>
+  <section class="kart siraKart" id="siraKart" hidden>
+    <p class="soru">Ağırdan hafife sırala<small id="siraIpucu">En ağırdan başlayarak sırayla dokun</small></p>
+    <ol class="siraListe" id="siraListe" aria-live="polite"></ol>
+    <div class="siraDug" id="siraDug"><button class="ikinci" type="button" id="siraSifir">Sıfırla</button><button class="ana" type="button" id="siraTart" disabled>Tart</button></div>
+    <section class="sonuc" id="siraSonuc" aria-live="polite" hidden>
+      <div class="karar"><span class="cip" id="siraKarar"></span><span class="puan" id="siraPuan"></span></div>
+      <p class="cevap" id="siraCevap"></p>
+      <button class="ana" type="button" id="siraSonraki">Sonraki tur</button>
+    </section>
+  </section>
 
   <div class="alt"><button class="ikinci" type="button" id="bastan">Baştan başla</button></div>
 
@@ -366,6 +392,10 @@ details p { margin: 8px 0 0; max-width: 65ch; }
   <details>
     <summary>Karşılıklı mod nasıl oynanır?</summary>
     <p id="vsYardim">İkiniz de sayfayı kendi telefonunuzda claude.ai hesabınızla açın, "Karşılıklı"ya basıp adınızı yazın. İkinize de aynı hayvanlar gelir. Herkes tahminini gizlice girer; biriniz tahmin verince diğerinin 15 saniyesi kalır, süre biterse kutudaki sayı gönderilir (boşsa 0 puan). İkiniz de tartınca terazi açılır ve iki tahmin yan yana görünür. Doğruya daha yakın olan turu alır. 10 tur sonunda toplam puanı yüksek olan kazanır, "Rövanş" ile yeni maç başlar. Maç bitince tur tur özet çıkar ve maç, "Maç arşivi"ne kaydedilir. Herkese açık linkle girenler karşılıklı moda bağlanamaz.</p>
+  </details>
+  <details>
+    <summary>Sırala modu nasıl oynanır?</summary>
+    <p>5 hayvan gelir; en ağırdan en hafife doğru sırayla dokun (yanlış dokunduysan tekrar dokun, sıradan çıkar). Hepsini sıralayınca "Tart": doğru sıra ve ağırlıklar görünür. Puan, 10 ikiliden kaçını doğru sıraladığına göre (her biri 10 puan); hepsi doğruysa 100. Siluetler eşit boyda, boyutlarına bakıp çözemezsin; ağırlıkları birbirine çok yakın hayvanlar aynı turda gelmez.</p>
   </details>
   <details>
     <summary>Nasıl puan alırım?</summary>
@@ -419,7 +449,7 @@ if (!(tema in TEMALAR)) tema = "karisik";
 let son = [], mod = "tum";
 try { son = JSON.parse(localStorage.getItem("ht-son")) || []; } catch (e) { son = []; }
 if (!Array.isArray(son)) son = [];
-try { const m = localStorage.getItem("ht-mod"); if (m === "benim" || m === "vs" || m === "gun") mod = m; } catch (e) {}
+try { const m = localStorage.getItem("ht-mod"); if (m === "benim" || m === "vs" || m === "gun" || m === "sira") mod = m; } catch (e) {}
 if (!OZELLER.length && mod === "benim") mod = "tum";
 let durum = { tur: 0, toplam: 0, simdi: null, cevap: null };
 
@@ -677,7 +707,7 @@ function turGoster() {
 }
 
 // ---- Rekorlar ve albüm (her açılan turda iki hayvan albüme girer); yalnız bu tarayıcıda
-let rekor = Object.assign({ tur: 0, tam: 0, son10: [], en10: 0, enSeri: 0, gunEnIyi: 0, vsMac: 0, vsGal: 0, vsEnYuksek: 0 }, nesne(depoOku("ht-rekor", {})));
+let rekor = Object.assign({ tur: 0, tam: 0, son10: [], en10: 0, enSeri: 0, gunEnIyi: 0, vsMac: 0, vsGal: 0, vsEnYuksek: 0, siraTur: 0, siraTam: 0 }, nesne(depoOku("ht-rekor", {})));
 let album = nesne(depoOku("ht-album", {})), rekorMesaj = null;
 function turBitti(T, t, p) {  // tek kişilik, günlük ya da karşılıklı her açılan tur bir kez
   for (const id of [T.a, T.b]) { const x = Array.isArray(album[id]) ? album[id] : [0, 0]; album[id] = [x[0] + 1, Math.max(x[1], p)]; }
@@ -697,7 +727,8 @@ function turBitti(T, t, p) {  // tek kişilik, günlük ya da karşılıklı her
 function rekorCiz() {
   const r = rekor, sat = [["Oynanan tur", SAYI.format(r.tur)], ["Tam isabet", SAYI.format(r.tam)], ["En iyi 10 tur ort.", r.en10 || "–"],
     ["Günün turu: en iyi", r.gunEnIyi ? `${r.gunEnIyi}/${GUN_TUR * 100}` : "–"], ["En uzun günlük seri", r.enSeri ? `${r.enSeri} gün` : "–"],
-    ["Karşılıklı maç", r.vsMac ? `${r.vsMac} (${r.vsGal} galibiyet)` : "–"], ["Karşılıklı en yüksek", r.vsEnYuksek || "–"]];
+    ["Karşılıklı maç", r.vsMac ? `${r.vsMac} (${r.vsGal} galibiyet)` : "–"], ["Karşılıklı en yüksek", r.vsEnYuksek || "–"],
+    ["Sırala: kusursuz", r.siraTur ? `${r.siraTam}/${r.siraTur} tur` : "–"]];
   $("rekorlar").innerHTML = sat.map(([a, b]) => `<div><dt>${a}</dt><dd>${b}</dd></div>`).join("");
 }
 function albumCiz() {
@@ -776,6 +807,78 @@ function gunPaylas() {
   try { navigator.clipboard.writeText(metin).then(() => not("Kopyalandı. WhatsApp'a ya da mesaja yapıştırabilirsin."), elle); } catch (e) { elle(); }
 }
 $("gunOzet").addEventListener("click", e => { if (e.target.closest?.("[data-is=paylas]")) gunPaylas(); });
+
+// ---- Sırala (24 Kas): 5 hayvan (karışık gruplar, son turların hayvanları gelmez, aynı siluet ve 1,25 kattan yakın ağırlık yok); en ağırdan
+// başlayarak dokunulur. Puan: 10 ikiliden doğru sıralananlar × 10. Hayvanlar albüme girer; skor yalnız bu oturumda (rekor: kusursuz tur sayısı)
+const SIRA_N = 5;
+let sr = { L: [], secim: [], bitti: false, tur: 0, toplam: 0, p: 0 };
+function siraUret() {
+  for (let deneme = 0; deneme < 2; deneme++) {
+    const haric = new Set(deneme ? [] : son), L = [];
+    for (let i = 0; i < 400 && L.length < SIRA_N; i++) {
+      const h = sec(haric, Math.random, grupSec(Math.random));
+      haric.add(h.id);
+      if (!L.some(x => x.sil[0] === h.sil[0] || Math.max(x.g, h.g) / Math.min(x.g, h.g) < 1.25)) L.push(h);
+    }
+    if (L.length === SIRA_N) {
+      son = [...son.filter(x => !L.some(h => h.id === x)), ...L.map(h => h.id)].slice(-SON_BOY);
+      try { localStorage.setItem("ht-son", JSON.stringify(son)); } catch (e) {}
+      return L;
+    }
+  }
+  return H.slice(0, SIRA_N);
+}
+function siraPuan(ids) {
+  let d = 0, n = 0;
+  for (let i = 0; i < ids.length; i++) for (let j = i + 1; j < ids.length; j++) { n++; if (BIL.get(ids[i]).g > BIL.get(ids[j]).g) d++; }
+  return Math.round(100 * d / n);
+}
+const siraSil = h => `<svg viewBox="0 0 ${h.sil[6]} ${h.sil[7]}" aria-hidden="true"><path fill-rule="evenodd" d="${h.sil[0]}"/></svg>`;
+function siraCiz() {
+  if (!sr.bitti) {
+    $("siraListe").innerHTML = sr.L.map(h => { const k = sr.secim.indexOf(h.id);
+      return `<li><button type="button" class="siraOge" data-id="${esc(h.id)}" aria-pressed="${k >= 0}"><span class="no">${k >= 0 ? k + 1 : ""}</span>${siraSil(h)}<span class="ad">${esc(h.ad)}</span></button></li>`; }).join("");
+  } else {
+    $("siraListe").innerHTML = [...sr.L].sort((x, y) => y.g - x.g).map((h, i) => { const k = sr.secim.indexOf(h.id);
+      return `<li class="siraOge sonucta ${k === i ? "dogru" : "yanlis"}"><span class="no">${i + 1}</span>${siraSil(h)}<span class="ad">${esc(h.ad)}<i>≈ ${agirlik(h.g)}</i></span><span class="senin">${k === i ? "✓" : "sen: " + (k + 1) + "."}</span></li>`; }).join("");
+  }
+  const kalan = SIRA_N - sr.secim.length;
+  $("siraIpucu").textContent = sr.bitti ? "Doğru sıra, en ağırdan" : kalan ? (sr.secim.length ? `${kalan} hayvan kaldı · yanlışsa tekrar dokun` : "En ağırdan başlayarak sırayla dokun") : "Hazır: Tart";
+  $("siraTart").disabled = !!kalan; $("siraDug").hidden = sr.bitti; $("siraSonuc").hidden = !sr.bitti;
+  $("sTur").textContent = SAYI.format(sr.tur); $("sPuan").textContent = SAYI.format(sr.toplam);
+  $("sOrt").textContent = sr.tur ? SAYI.format(Math.round(sr.toplam / sr.tur)) : "–";
+}
+function siraYeni() { sr = { ...sr, L: siraUret(), secim: [], bitti: false, p: 0 }; siraCiz(); }
+function siraGir() {
+  $("oyunKart").hidden = true; $("gunOzet").hidden = true; $("siraKart").hidden = false; $("bastan").hidden = true;
+  if (!sr.L.length) siraYeni(); else siraCiz();
+}
+function siraTart() {
+  if (sr.bitti || sr.secim.length < SIRA_N) return;
+  const p = siraPuan(sr.secim), dogruYer = [...sr.L].sort((x, y) => y.g - x.g).filter((h, i) => sr.secim[i] === h.id).length;
+  sr.bitti = true; sr.p = p; sr.tur += 1; sr.toplam += p;
+  for (const h of sr.L) { const x = Array.isArray(album[h.id]) ? album[h.id] : [0, 0]; album[h.id] = [x[0] + 1, Math.max(x[1], p)]; }
+  depoYaz("ht-album", album);
+  rekor.siraTur += 1; if (p === 100) rekor.siraTam += 1;
+  depoYaz("ht-rekor", rekor); albumCiz(); rekorCiz();
+  $("siraKarar").className = "cip " + (p === 100 ? "dengede" : "hafif");
+  $("siraKarar").textContent = p === 100 ? "Kusursuz sıra!" : p >= 80 ? "Çok yakın" : p >= 50 ? "Fena değil" : "Karıştı";
+  $("siraPuan").textContent = `+${p} puan`;
+  $("siraCevap").innerHTML = `Yeri doğru: <b>${dogruYer}/${SIRA_N}</b> · doğru sıralı ikili: <b>${p / 10}/10</b>`;
+  ses("tart"); setTimeout(() => kutla(p, p === 100), 250);
+  siraCiz();
+  kaydir($("siraKart"), "start");
+}
+$("siraListe").addEventListener("click", e => {
+  const b = e.target.closest?.("button[data-id]");
+  if (!b || sr.bitti) return;
+  const k = sr.secim.indexOf(b.dataset.id);
+  if (k >= 0) sr.secim.splice(k, 1); else sr.secim.push(b.dataset.id);
+  ses("tik"); siraCiz();
+});
+$("siraSifir").addEventListener("click", () => { sr.secim = []; siraCiz(); });
+$("siraTart").addEventListener("click", siraTart);
+$("siraSonraki").addEventListener("click", siraYeni);
 
 function yeni() {
   durum.simdi = yeniTur(OZELLER.length > 0 && (mod === "benim" || (tema === "karisik" && Math.random() < OZEL_PAY)));
@@ -1209,11 +1312,13 @@ function vsCik() {
   $("dtOrt").textContent = "Ort."; $("sonraki").textContent = "Sonraki tur"; $("sonraki").disabled = false;
 }
 
-const MODLAR = [["modTum", "tum"], ["modGun", "gun"], ["modBenim", "benim"], ["modVs", "vs"]];
+const MODLAR = [["modTum", "tum"], ["modGun", "gun"], ["modBenim", "benim"], ["modVs", "vs"], ["modSira", "sira"]];
 function modYaz() {
   $("modBenim").hidden = !OZELLER.length;
   for (const [id, m] of MODLAR) $(id).setAttribute("aria-pressed", String(mod === m));
   $("temalar").hidden = mod !== "tum";
+  $("ipucu").textContent = mod === "sira" ? "Hayvanları en ağırdan en hafife sırala; siluetler eşit boyda, boyutlarına güvenme."
+    : "Teraziyi dengelemek için soru işaretli kefeye kaç tane koymalısın?";
   for (const b of $("temalar").querySelectorAll?.("button") || []) b.setAttribute("aria-pressed", String(b.dataset.tema === tema));
 }
 for (const [id, m] of MODLAR) {
@@ -1221,11 +1326,12 @@ for (const [id, m] of MODLAR) {
     if (mod === m) return;
     if (mod === "vs") vsCik();
     if (mod === "gun") { $("gunOzet").hidden = true; $("oyunKart").hidden = false; $("bastan").hidden = false; }
-    if (mod === "vs" || mod === "gun" || m === "vs" || m === "gun") durum = { tur: 0, toplam: 0, simdi: null, cevap: null };
+    if (mod === "sira") { $("siraKart").hidden = true; $("oyunKart").hidden = false; $("bastan").hidden = false; }
+    if (mod === "vs" || mod === "gun" || mod === "sira" || m === "vs" || m === "gun") durum = { tur: 0, toplam: 0, simdi: null, cevap: null };
     mod = m;
     try { localStorage.setItem("ht-mod", m); } catch (e) {}
     modYaz();
-    if (m === "vs") vsGir(); else if (m === "gun") gunGir(); else yeni();
+    if (m === "vs") vsGir(); else if (m === "gun") gunGir(); else if (m === "sira") siraGir(); else yeni();
   });
 }
 $("temalar").addEventListener("click", e => {
@@ -1241,6 +1347,7 @@ document.fonts?.ready.then(yerlestir);
 function basla(d) {
   if (mod === "vs") return vsGir();
   if (mod === "gun") return gunGir();
+  if (mod === "sira") return siraGir();
   const s = d?.durum?.simdi;
   if (d?.mod && d.mod !== "vs" && d.mod !== "gun" && OZELLER.length) { mod = d.mod; modYaz(); }
   if (s && BIL.has(s.a) && BIL.has(s.b)) { durum = d.durum; sonPuan = durum.simdi; aci = durum.cevap ? egim(durum.cevap.t, s.c) : 0; turGoster(); }
